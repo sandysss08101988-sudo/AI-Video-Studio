@@ -53,7 +53,7 @@
     </div>
 
     <script>
-        function generateVideo() {
+        async function generateVideo() {
             const prompt = document.getElementById('promptInput').value;
             const outputDiv = document.getElementById('output');
             
@@ -62,9 +62,31 @@
                 return;
             }
 
-            outputDiv.innerHTML = `<p>Status: Request submitted for prompt "${prompt}"...</p>`;
+            outputDiv.innerHTML = `<p>Status: Sending request to server...</p>`;
+
+            try {
+                // Adjust endpoint URL when hosting publicly
+                const response = await fetch('http://127.0.0.1:8000/generate-video', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    outputDiv.innerHTML = `
+                        <p><strong>Status:</strong> ${data.status}</p>
+                        <p><strong>Task ID:</strong> ${data.task_id}</p>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                    `;
+                } else {
+                    outputDiv.innerHTML = `<p style="color:red;">Error: ${data.detail || 'Failed to generate'}</p>`;
+                }
+            } catch (err) {
+                outputDiv.innerHTML = `<p style="color:orange;">Server connection failed. Make sure backend server is running.</p>`;
+            }
         }
     </script>
 </body>
-  </html>
-
+</html>
