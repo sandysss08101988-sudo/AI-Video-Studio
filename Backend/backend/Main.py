@@ -1,14 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from backend.schemas import VideoRequest, VideoResponse
-from backend.services import generate_video_task
+from backend.schemas import VideoRequest, AudioRequest, StudioTaskResponse
+from backend.services import generate_video_task, generate_audio_task
 
 app = FastAPI(title="AI Video Studio API")
 
-# Enable CORS so frontend can communicate with backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Adjust in production
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -22,10 +21,14 @@ def read_root():
 def health_check():
     return {"health": "ok"}
 
-@app.post("/generate-video", response_model=VideoResponse)
+@app.post("/generate-video", response_model=StudioTaskResponse)
 def create_video(request: VideoRequest):
     if not request.prompt.strip():
         raise HTTPException(status_code=400, detail="Prompt cannot be empty")
-    
-    result = generate_video_task(request)
-    return result
+    return generate_video_task(request)
+
+@app.post("/generate-audio", response_model=StudioTaskResponse)
+def create_audio(request: AudioRequest):
+    if not request.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    return generate_audio_task(request)
