@@ -1,21 +1,11 @@
-
-
 from fastapi import FastAPI
 
-app = FastAPI(
-    title="AI Video Studio API",
-    version="0.1.0"
-)
+app = FastAPI(title="AI Video Studio API")
 
 @app.get("/")
-def home():
-    return {
-        "message": "Welcome to AI Video Studio API"
-    }
+def read_root():
+    return {"status": "online", "message": "AI Video Studio API is running"}
 
 @app.get("/health")
-def health():
-    return {
-        "status": "online",
-        "version": "0.1.0"
-    }
+def health_check():
+    return {"health": "ok"}
