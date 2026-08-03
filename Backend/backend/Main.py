@@ -1,8 +1,18 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from backend.schemas import VideoRequest, VideoResponse
 from backend.services import generate_video_task
 
 app = FastAPI(title="AI Video Studio API")
+
+# Enable CORS so frontend can communicate with backend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def read_root():
