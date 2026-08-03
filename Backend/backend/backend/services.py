@@ -1,25 +1,21 @@
 import os
 import uuid
 import replicate
-from backend.schemas import VideoRequest
+from backend.schemas import VideoRequest, AudioRequest
 
 def generate_video_task(request: VideoRequest):
     api_token = os.getenv("REPLICATE_API_KEY")
     
-    # If no API key is set, fall back to mock generation for local testing
     if not api_token or api_token == "your_replicate_api_key_here":
         task_id = str(uuid.uuid4())
         return {
             "task_id": task_id,
             "status": "processing (mock)",
-            "message": f"[Mock Mode] Video task queued for prompt: '{request.prompt}'. Add REPLICATE_API_KEY to test live generation."
+            "message": f"[Mock Mode] Video task queued for prompt: '{request.prompt}'."
         }
 
     try:
-        # Initialize Replicate client
         client = replicate.Client(api_token=api_token)
-        
-        # Runs Luma Ray or similar video generation model
         output = client.run(
             "luma/ray",
             input={
@@ -27,12 +23,11 @@ def generate_video_task(request: VideoRequest):
                 "aspect_ratio": request.aspect_ratio
             }
         )
-        
-        task_id = str(uuid.uuid4())
         return {
-            "task_id": task_id,
+            "task_id": str(uuid.uuid4()),
             "status": "succeeded",
-            "message": f"Video generated successfully! Output: {output}"
+            "message": "Video generated successfully!",
+            "output_url": str(output)
         }
     except Exception as e:
         return {
@@ -40,3 +35,12 @@ def generate_video_task(request: VideoRequest):
             "status": "failed",
             "message": f"API Error: {str(e)}"
         }
+
+def generate_audio_task(request: AudioRequest):
+    # Dummy placeholder for ElevenLabs / TTS audio service
+    task_id = str(uuid.uuid4())
+    return {
+        "task_id": task_id,
+        "status": "processing (mock)",
+        "message": f"[Mock Mode] Audio generated for text: '{request.text}' using voice '{request.voice}'."
+    }
