@@ -1,0 +1,6 @@
+{
+  "name": "AI Video Studio",
+  "description": "Long AI Video Generator with script breakdown, multi-shot timeline, character consistency, and cinematic storyboards powered by Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
